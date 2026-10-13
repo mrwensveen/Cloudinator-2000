@@ -62,8 +62,8 @@ module ParserModule =
 
         let board: Map<Square, Piece> =
             lines[0..7]
-            |> Array.fold (fun (y, board) line -> y + 1, line |> parseLine y board) (0, Map.empty)
-            |> snd
+            |> Array.indexed
+            |> Array.fold (fun board (y, line) -> line |> parseLine y board) Map.empty
 
         // Find en-passant marker, if any
         let enPassant =

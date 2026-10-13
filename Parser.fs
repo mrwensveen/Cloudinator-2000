@@ -52,7 +52,7 @@ module ParserModule =
         pieces |> Seq.fold (fun b (square, piece) -> addPiece b square piece) board
 
     let Game (str: string) =
-        let lines = str.Trim().Replace("|", "").Split "\n" |> Array.map (fun s -> s.Trim())
+        let lines = str.Trim().Split "\n" |> Array.map (fun s -> s.Trim().Replace("|", ""))
 
         let turn =
             if lines.Length > 8 && lines[8].Contains "turn=BLACK" then
@@ -65,9 +65,19 @@ module ParserModule =
             |> Array.fold (fun (y, board) line -> y + 1, line |> parseLine y board) (0, Map.empty)
             |> snd
 
+        // Find en-passant marker, if any
+        let enPassant =
+            lines
+            |> Array.indexed
+            |> Array.tryPick (fun (y, line) ->
+                match line.IndexOf "↑", line.IndexOf "↓" with
+                | x, _ when x >= 0 -> Some ((x + 1, 8 - y), (x + 1, 8 - y + 1))
+                | _, x when x >= 0 -> Some ((x + 1, 8 - y), (x + 1, 8 - y - 1))
+                | _ -> None)
+
         {
             Board = board
             Turn = turn
-            EnPassant = None // TODO
+            EnPassant = enPassant
             Previous = None
         }

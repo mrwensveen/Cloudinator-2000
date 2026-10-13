@@ -36,7 +36,7 @@ module ParserModule =
         let decode (enc: int) (moved: bool) =
             (if moved then enc else enc - 0x0303) |> char |> string
 
-        let encoded = Regex.Replace(line.Trim(), ".\u0303", encodeUnmoved)
+        let encoded = Regex.Replace(line, ".\u0303", encodeUnmoved)
 
         let pieces =
             encoded

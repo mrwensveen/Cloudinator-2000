@@ -34,3 +34,4 @@ let str =
 let game = Game str
 
 printfn "%A" game
+printfn "%A" (Seq.toList game.Board.Keys)

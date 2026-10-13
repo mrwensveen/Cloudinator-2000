@@ -55,3 +55,11 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+
+# Azurite
+__azurite_*.json
+__blobstorage__/
+__queuestorage__/
+
+# Azure Functions localsettings file
+local.settings.json

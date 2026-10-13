@@ -50,7 +50,7 @@ module GameStateModule =
         member this.Move (piece: Piece) (src: Square) (dst: Square) =
             let enPassant =
                 if piece.Kind = Pawn && not piece.Moved && snd dst = snd src + 2 * piece.Direction then
-                    Some((fst src, snd src + piece.Direction), dst)
+                    Some ((fst src, snd src + piece.Direction), dst)
                 else
                     None
 
@@ -61,7 +61,7 @@ module GameStateModule =
                 // Delete the opponent's pawn if it left an en-passant possibility and the current
                 // player's pawn is moved to that spot
                 |> match this.EnPassant with
-                   | Some(s, d) when dst = s -> Map.remove d
+                   | Some (s, d) when dst = s -> Map.remove d
                    | _ -> id
                 // Add the piece to the new position
                 |> Map.add dst { piece with Moved = true }
@@ -89,10 +89,10 @@ module GameStateModule =
 
             let positions: Square option array =
                 [|
-                    Some(x, y + direction)
-                    if not piece.Moved then Some(x, y + 2 * direction) else None
-                    if x >= 2 then Some(x - 1, y + direction) else None
-                    if x <= 7 then Some(x + 1, y + direction) else None
+                    Some (x, y + direction)
+                    if not piece.Moved then Some (x, y + 2 * direction) else None
+                    if x >= 2 then Some (x - 1, y + direction) else None
+                    if x <= 7 then Some (x + 1, y + direction) else None
                 |]
 
             let occupants = positions |> Array.map (getOccupant game)
@@ -100,7 +100,7 @@ module GameStateModule =
             let canCapture i =
                 match occupants[i], game.EnPassant with
                 | Some occupant, _ when occupant.Color <> piece.Color -> true
-                | _, Some(square, _) when Some square = positions[i] -> true
+                | _, Some (square, _) when Some square = positions[i] -> true
                 | _ -> false
 
             let possible =

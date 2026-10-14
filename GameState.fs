@@ -77,9 +77,7 @@ module GameStateModule =
     type Move = Square * GameState
 
     let getOccupant (game: GameState) (position: Square option) : Piece option =
-        match position with
-        | None -> None
-        | Some p -> game.Board.TryFind p
+        Option.bind game.Board.TryFind position
 
     let getPawnMoves (game: GameState) (position: Square) : GameState seq =
         let getPawnMoves' (piece: Piece) : GameState seq =
@@ -143,32 +141,72 @@ module GameStateModule =
         let getKnightMoves' (piece: Piece) : GameState seq =
             let x, y = position
 
-            let positions: Square option array =
+            let positions: Square array =
                 [|
-                    if x <= 7 && y <= 6 then Some(x + 1, y + 2) else None
-                    if x <= 6 && y <= 7 then Some(x + 2, y + 1) else None
-                    if x <= 6 && y >= 2 then Some(x + 2, y - 1) else None
-                    if x <= 7 && y >= 3 then Some(x + 1, y - 2) else None
-                    if x >= 2 && y >= 3 then Some(x - 1, y - 2) else None
-                    if x >= 3 && y >= 2 then Some(x - 2, y - 1) else None
-                    if x >= 3 && y <= 7 then Some(x - 2, y + 1) else None
-                    if x >= 2 && y <= 6 then Some(x - 1, y + 2) else None
+                    if x <= 7 && y <= 6 then yield x + 1, y + 2
+                    if x <= 6 && y <= 7 then yield x + 2, y + 1
+                    if x <= 6 && y >= 2 then yield x + 2, y - 1
+                    if x <= 7 && y >= 3 then yield x + 1, y - 2
+                    if x >= 2 && y >= 3 then yield x - 1, y - 2
+                    if x >= 3 && y >= 2 then yield x - 2, y - 1
+                    if x >= 3 && y <= 7 then yield x - 2, y + 1
+                    if x >= 2 && y <= 6 then yield x - 1, y + 2
                 |]
 
-            let possible =
+            let occupants =
                 positions
-                |> Array.map (fun p ->
-                    let occupant = getOccupant game p
+                |> Array.map (fun p -> p, getOccupant game (Some p))
 
-                    match occupant with
-                    | None -> p
-                    | Some { Color = c } when c <> piece.Color -> p
-                    | _ -> None)
+            let possible = occupants |> Array.map (fun occupant ->
+                match occupant with
+                | pos, None -> Some pos
+                | pos, Some { Color = c } when c <> piece.Color -> Some pos
+                | _ -> None)
 
             possible |> Seq.choose id |> Seq.map (game.Move piece position)
 
         match getOccupant game (Some position) with
         | Some piece -> getKnightMoves' piece
+        | _ -> Seq.empty
+
+    let getKingMoves (game: GameState) (position: Square) (isCastlingAllowed: bool): GameState seq =
+        let getStepMoves (piece: Piece): GameState seq =
+            let x, y = position
+
+            let positions: Square array =
+                [|
+                    if x <= 7 then yield x + 1, y
+                    if x >= 2 then yield x - 1, y
+                    if y <= 7 then yield x, y + 1
+                    if y >= 2 then yield x, y - 1
+                    if x <= 7 && y <= 7 then yield x + 1, y + 1
+                    if x <= 7 && y >= 2 then yield x + 1, y - 1
+                    if x >= 2 && y <= 7 then yield x - 1, y + 1
+                    if x >= 2 && y >= 2 then yield x - 1, y - 1
+                |]
+            let occupants =
+                positions
+                |> Array.map (fun p -> p, getOccupant game (Some p))
+
+            let possible = occupants |> Array.map (fun occupant ->
+                match occupant with
+                | pos, None -> Some pos
+                | pos, Some { Color = c } when c <> piece.Color -> Some pos
+                | _ -> None)
+
+            possible |> Seq.choose id |> Seq.map (game.Move piece position)
+
+        let getCastlingMoves (piece: Piece): GameState seq =
+            Seq.empty // TODO
+
+        let getKingMoves' (piece: Piece): GameState seq =
+            seq {
+                yield! getStepMoves piece
+                yield! getCastlingMoves piece
+            }
+
+        match getOccupant game (Some position) with
+        | Some piece -> getStepMoves piece
         | _ -> Seq.empty
 
 

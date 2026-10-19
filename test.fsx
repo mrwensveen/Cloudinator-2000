@@ -1,5 +1,5 @@
-#load "GameState.fs"
-#load "Parser.fs"
+#load "Cloudinator-2000.Game/GameState.fs"
+#load "Cloudinator-2000.Game/Parser.fs"
 
 open Cloudinator_2000.Game.GameStateModule
 open Cloudinator_2000.Game.ParserModule

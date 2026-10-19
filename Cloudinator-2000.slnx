@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="Cloudinator-2000.fsproj" />
+  <Project Path="Cloudinator-2000.Game/Cloudinator-2000.Game.fsproj" />
 </Solution>

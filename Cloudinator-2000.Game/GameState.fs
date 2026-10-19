@@ -4,7 +4,29 @@ module GameStateModule =
 
     type Square = int * int
 
-    let private step ((x, y): Square) ((dx, dy): (int * int)) : Square option =
+    type private SlideDirection =
+        | Up
+        | Up_Right
+        | Right
+        | Down_Right
+        | Down
+        | Down_Left
+        | Left
+        | Up_Left
+
+        member this.Value =
+            match this with
+            | Up -> 0, 1
+            | Up_Right -> 1, 1
+            | Right -> 1, 0
+            | Down_Right -> 1, -1
+            | Down -> 0, -1
+            | Down_Left -> -1, -1
+            | Left -> -1, 0
+            | Up_Left -> -1, 1
+
+    let private step ((x, y): Square) (direction: SlideDirection) : Square option =
+        let dx, dy = direction.Value
         let nx, ny = x + dx, y + dy
 
         if nx >= 1 && nx <= 8 && ny >= 1 && ny <= 8 then
@@ -227,14 +249,14 @@ module GameStateModule =
 
     let private getSlideDirections =
         function
-        | Queen -> [ 0, 1; 1, 1; 1, 0; 1, -1; 0, -1; -1, -1; -1, 0; -1, 1 ]
-        | Rook -> [ 0, 1; 1, 0; 0, -1; -1, 0 ]
-        | Bishop -> [ 1, 1; 1, -1; -1, -1; -1, 1 ]
+        | Queen -> [ Up; Up_Right; Right; Down_Right; Down; Down_Left; Left; Up_Left ]
+        | Rook -> [ Up; Right; Down; Left ]
+        | Bishop -> [ Up_Right; Down_Right; Down_Left; Up_Left ]
         | _ -> List.empty
 
     let getSlideMoves (game: GameState) (position: Square) : GameState seq =
         let getSlideMoves' (piece: Piece) : GameState seq =
-            let rec slide (position: Square) (direction: (int * int)) : Square seq =
+            let rec slide (position: Square) (direction: SlideDirection) : Square seq =
                 let next = step position direction
                 let occupant = getOccupant game next
 

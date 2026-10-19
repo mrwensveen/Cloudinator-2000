@@ -115,7 +115,7 @@ module GameStateModule =
                     $"|{line}|")
                 |> String.concat "\n"
 
-            $"{board}\nturn={this.Turn.ToString().ToUpperInvariant()}"
+            $"{board}\nturn={this.Turn.ToString().ToUpperInvariant()}\n"
 
     type Move = Square * GameState
 

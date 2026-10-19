@@ -37,6 +37,6 @@ let game = Game str
 
 let moves = getPossibleMoves game true |> List.ofSeq
 // moves |> Seq.iter (printfn "%A")
-// moves |> Seq.map (snd >> string) |> Seq.iter (printfn "%s")
+moves |> Seq.map (snd >> string) |> Seq.iter (printfn "%s")
 
-snd moves[1] |> string |> printfn "%s"
+// snd moves[1] |> string |> printfn "%s"

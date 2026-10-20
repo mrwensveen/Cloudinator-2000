@@ -1,14 +1,13 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <RootNamespace>Cloudinator_2000.Game</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
-
   <ItemGroup>
+    <Compile Include="Collections.fs" />
     <Compile Include="GameState.fs" />
     <Compile Include="Parser.fs" />
+    <Compile Include="Mover.fs" />
   </ItemGroup>
-
 </Project>

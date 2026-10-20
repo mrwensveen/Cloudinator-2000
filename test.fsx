@@ -1,8 +1,11 @@
 #load "Cloudinator-2000.Game/GameState.fs"
 #load "Cloudinator-2000.Game/Parser.fs"
+#load "Cloudinator-2000.Game/Collections.fs"
+#load "Cloudinator-2000.Game/Mover.fs"
 
 open Cloudinator_2000.Game.GameStateModule
 open Cloudinator_2000.Game.ParserModule
+open Cloudinator_2000.Game.MoverModule
 
 let str =
     """
@@ -35,8 +38,8 @@ let game = Game str
 // printfn "%A" game
 // printfn "%A" (Seq.toList game.Board.Keys)
 
-let moves = getPossibleMoves game true |> List.ofSeq
-// moves |> Seq.iter (printfn "%A")
-moves |> Seq.map (snd >> string) |> Seq.iter (printfn "%s")
+// let moves = getPossibleMoves game true |> List.ofSeq
+// moves |> Seq.map (snd >> string) |> Seq.iter (printfn "%s")
 
-// snd moves[1] |> string |> printfn "%s"
+let mover = RandomPieceMover() :> IMover
+mover.Move game |> Option.map (fst >> string >> printfn "%s")

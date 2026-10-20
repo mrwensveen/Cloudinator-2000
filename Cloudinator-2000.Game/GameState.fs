@@ -1,5 +1,7 @@
 namespace Cloudinator_2000.Game
 
+open System.Text.Json.Serialization
+
 module GameStateModule =
 
     type Square = int * int
@@ -84,6 +86,7 @@ module GameStateModule =
             Board: Map<Square, Piece>
             Turn: PieceColor
             EnPassant: (Square * Square) option
+            [<JsonIgnore>]
             Previous: GameState option
         }
 
